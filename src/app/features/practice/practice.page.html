@@ -1,0 +1,96 @@
+<header class="page-head">
+  <h1>Prácticas</h1>
+  <p class="lead">Genera un ejercicio nuevo con datos aleatorios, resuélvelo y recibe retroalimentación inmediata.</p>
+</header>
+
+<div class="module">
+  <section class="panel" aria-labelledby="cfg">
+    <h2 id="cfg">Configura tu práctica</h2>
+    <div class="field-block">
+      <label for="p-modulo">Tema</label>
+      <select class="input" id="p-modulo" (change)="module.set($any($event.target).value)">
+        @for (m of modules; track m.id) {
+          <option [value]="m.id" [selected]="m.id === module()">{{ m.label }}</option>
+        }
+      </select>
+    </div>
+    <fieldset class="field-block">
+      <legend>Nivel</legend>
+      <div class="radio-group">
+        <label class="radio"><input type="radio" name="nivel" [checked]="level() === 'basico'" (change)="level.set('basico')" /> Básico</label>
+        <label class="radio"><input type="radio" name="nivel" [checked]="level() === 'intermedio'" (change)="level.set('intermedio')" /> Intermedio</label>
+      </div>
+    </fieldset>
+    <div class="actions">
+      <button type="button" class="btn-primary" (click)="generate()"><app-icon name="refresh" [size]="18" /> Generar práctica</button>
+    </div>
+
+    <div class="score" role="status" aria-label="Marcador de la sesión">
+      <span>Aciertos / intentos</span>
+      <strong class="num">{{ session.label() }}</strong>
+    </div>
+  </section>
+
+  <section class="result-panel" aria-label="Ejercicio">
+    @if (exercise(); as ex) {
+      <article class="panel">
+        <p class="tag">{{ ex.title }} · {{ ex.level === 'basico' ? 'Básico' : 'Intermedio' }}</p>
+        <p class="statement mono">{{ ex.statement }}</p>
+        <p class="question"><strong>{{ ex.question }}</strong></p>
+
+        <form class="answer" (submit)="check($event)" novalidate>
+          <div class="field-block">
+            <label for="respuesta-estudiante">Tu respuesta{{ ex.unit ? ' (' + ex.unit + ')' : '' }}</label>
+            <input
+              class="input num"
+              id="respuesta-estudiante"
+              type="text"
+              inputmode="decimal"
+              autocomplete="off"
+              [value]="answerText()"
+              [disabled]="solved()"
+              [attr.aria-describedby]="result() ? 'feedback' : null"
+              [attr.aria-invalid]="result()?.status === 'invalid' ? 'true' : null"
+              (input)="answerText.set($any($event.target).value)"
+            />
+            <p class="help">Redondea a {{ ex.decimals }} {{ ex.decimals === 1 ? 'decimal' : 'decimales' }}. Se acepta una pequeña tolerancia.</p>
+          </div>
+          <div class="actions">
+            <button type="submit" class="btn-primary" [disabled]="solved()">Comprobar</button>
+            <button type="button" class="btn-secondary" (click)="reveal()">Ver solución</button>
+            <button type="button" class="btn-secondary" (click)="generate()">Siguiente</button>
+          </div>
+        </form>
+
+        <div id="feedback" aria-live="polite">
+          @if (result(); as r) {
+            @switch (r.status) {
+              @case ('correct') {
+                <div class="fb ok"><app-icon name="check" /> <p><strong>{{ r.message }}</strong> Revisa la solución para ver el procedimiento.</p></div>
+              }
+              @case ('incorrect') {
+                <div class="fb bad"><app-icon name="alert" /> <p><strong>{{ r.message }}</strong> {{ r.hint }} Puedes corregir y volver a comprobar.</p></div>
+              }
+              @default {
+                <app-alert-banner level="warning" [message]="r.message" />
+              }
+            }
+          }
+        </div>
+      </article>
+
+      @if (revealed() || solved()) {
+        <section aria-label="Solución">
+          <p class="expected">Respuesta: <strong class="num">{{ expectedText() }}</strong></p>
+          <app-solution-view [solution]="ex.solution" [decimals]="ex.decimals + 2" />
+        </section>
+      }
+    } @else {
+      <div class="empty-prac">
+        <app-icon name="target" [size]="32" />
+        <p>Elige un tema y un nivel y pulsa «Generar práctica». Cada práctica usa datos nuevos.</p>
+        <button type="button" class="btn-primary" (click)="generate()">Generar práctica</button>
+      </div>
+    }
+  </section>
+</div>

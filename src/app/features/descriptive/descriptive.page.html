@@ -1,0 +1,58 @@
+<header class="page-head">
+  <h1>Estadística descriptiva</h1>
+  <p class="lead">Media, mediana, moda, rango y medidas de dispersión de tus datos, con fórmula, sustitución y procedimiento.</p>
+</header>
+
+@if (entendido(); as e) {
+  <app-alert-banner level="info" [message]="e" />
+}
+@if (aviso(); as a) {
+  <app-alert-banner level="warning" [message]="a" />
+}
+
+<div class="module">
+  <form class="panel" (submit)="submit($event)" novalidate>
+    <h2>Tus datos</h2>
+    <app-error-summary [errors]="errorItems()" />
+
+    <app-data-input inputId="datos" label="Datos" [(value)]="text" [showErrors]="submitted()" />
+
+    <div class="row">
+      <div class="field-block">
+        <label for="unidad">Unidad (opcional)</label>
+        <input class="input" id="unidad" list="lista-unidades" autocomplete="off" placeholder="Ej.: A, V, m, s" [value]="unit()" (input)="unit.set($any($event.target).value)" />
+        <datalist id="lista-unidades">
+          @for (u of units; track u) {
+            <option [value]="u"></option>
+          }
+        </datalist>
+      </div>
+      <app-decimals-select [(value)]="decimals" />
+    </div>
+
+    <fieldset class="field-block">
+      <legend>Tipo de datos</legend>
+      <div class="radio-group">
+        <label class="radio"><input type="radio" name="tipo" value="muestra" [checked]="kind() === 'muestra'" (change)="kind.set('muestra')" /> Muestra (n − 1)</label>
+        <label class="radio"><input type="radio" name="tipo" value="poblacion" [checked]="kind() === 'poblacion'" (change)="kind.set('poblacion')" /> Población (N)</label>
+      </div>
+      <p class="help">Define cuál desviación estándar se destaca. Siempre se calculan las dos.</p>
+    </fieldset>
+
+    <div class="actions">
+      <button type="submit" class="btn-primary">Calcular</button>
+      <button type="button" class="btn-secondary" (click)="loadExample()"><app-icon name="flask" [size]="18" /> Cargar ejemplo</button>
+      <button type="button" class="btn-secondary" (click)="clear()"><app-icon name="eraser" [size]="18" /> Limpiar</button>
+    </div>
+  </form>
+
+  <section class="result-panel" #resultPanel tabindex="-1" aria-label="Resultado">
+    @if (solution(); as s) {
+      <app-solution-view [solution]="s" [decimals]="decimals()" />
+    } @else {
+      <app-empty-state [message]="emptyMessage()">
+        <button type="button" class="btn-secondary" (click)="loadExample()">Cargar ejemplo de corriente</button>
+      </app-empty-state>
+    }
+  </section>
+</div>

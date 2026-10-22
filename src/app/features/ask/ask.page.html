@@ -1,0 +1,57 @@
+<header class="page-head">
+  <h1>Pregunta</h1>
+  <p class="lead">Escribe tu problema con tus propias palabras. Detecto qué quieres calcular y abro el módulo con tus datos ya cargados.</p>
+</header>
+
+<form class="panel ask-form" (submit)="ask($event)">
+  <div class="field-block">
+    <label for="pregunta">Tu pregunta</label>
+    <textarea class="input ask-input" id="pregunta" rows="3" [value]="text()" (input)="text.set($any($event.target).value)" placeholder="Ej.: calcula la media y la desviación estándar muestral de 2.1, 2.3, 2.2, 2.4 y 2.0" aria-describedby="pregunta-ayuda"></textarea>
+    <p class="help" id="pregunta-ayuda">Incluye los números. Si no entiendo la pregunta o no puedo resolverla, te lo digo en lugar de inventar un resultado.</p>
+  </div>
+  <div class="actions">
+    <button type="submit" class="btn-primary"><app-icon name="search" [size]="18" /> Preguntar</button>
+  </div>
+</form>
+
+@if (result(); as r) {
+  <section class="stack answer" aria-live="polite" aria-label="Interpretación de la pregunta">
+    @switch (r.status) {
+      @case ('ambiguous') {
+        <app-alert-banner level="info" [message]="r.message" />
+      }
+      @case ('unsupported') {
+        <app-alert-banner level="warning" [message]="r.message" />
+      }
+      @default {
+        <app-alert-banner level="info" [message]="navigation() ? 'Abriendo el módulo con tus datos…' : r.message" />
+      }
+    }
+
+    @if (suggestions().length) {
+      <div class="panel">
+        <h2>{{ r.status === 'unsupported' ? 'Lo más cercano que sí resuelvo' : '¿Qué quieres usar?' }}</h2>
+        <ul class="options">
+          @for (s of suggestions(); track s.id) {
+            <li><a class="btn-secondary" [routerLink]="s.route">{{ s.label }}</a></li>
+          }
+        </ul>
+      </div>
+    }
+  </section>
+} @else {
+  <section class="panel" aria-labelledby="h-ej">
+    <h2 id="h-ej">Prueba con estas preguntas</h2>
+    <ul class="examples">
+      @for (e of examples; track e) {
+        <li><button type="button" class="chip-btn" (click)="useExample(e)">{{ e }}</button></li>
+      }
+    </ul>
+    <h2>Temas que resuelvo</h2>
+    <ul class="options">
+      @for (m of modules; track m.path) {
+        <li><a class="btn-secondary" [routerLink]="m.path"><app-icon [name]="m.icon" [size]="18" /> {{ m.label }}</a></li>
+      }
+    </ul>
+  </section>
+}

@@ -1,0 +1,32 @@
+/* Píldora/banner del demo: color al 10 % de fondo y al 20 % de borde, con icono y texto */
+.banner {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid;
+  border-radius: var(--radius-field);
+  font-size: 0.9375rem;
+}
+.banner p {
+  margin: 0;
+  color: var(--color-text);
+}
+.banner app-icon {
+  margin-top: 2px;
+}
+.info {
+  background: var(--color-info-bg);
+  border-color: rgb(0 128 255 / 20%);
+  color: var(--color-info);
+}
+.warning {
+  background: var(--color-warning-bg);
+  border-color: rgb(251 191 36 / 20%);
+  color: var(--color-warning);
+}
+.error {
+  background: var(--color-danger-bg);
+  border-color: rgb(251 44 54 / 25%);
+  color: var(--color-danger);
+}

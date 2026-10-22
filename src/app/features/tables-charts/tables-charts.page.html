@@ -1,0 +1,153 @@
+<header class="page-head">
+  <h1>Tablas y gráficas</h1>
+  <p class="lead">Construye una tabla de frecuencias, un histograma o un diagrama de dispersión a partir de tus datos.</p>
+</header>
+
+@if (entendido(); as e) {
+  <app-alert-banner level="info" [message]="e" />
+}
+@if (aviso(); as a) {
+  <app-alert-banner level="warning" [message]="a" />
+}
+
+<app-tabs [tabs]="tabs" label="Tipo de gráfica" [(active)]="tab" />
+
+<div class="module">
+  <form class="panel" (submit)="submit($event)" novalidate>
+    <app-error-summary [errors]="errorItems()" />
+
+    @if (tab() === 'datos') {
+      <h2>Tus datos</h2>
+      <app-data-input inputId="datos" label="Datos" [(value)]="text" [showErrors]="submitted()" />
+
+      <fieldset class="field-block">
+        <legend>Número de clases</legend>
+        <div class="radio-group">
+          <label class="radio"><input type="radio" name="clases" [checked]="classMode() === 'auto'" (change)="classMode.set('auto')" /> Automático (Sturges)</label>
+          <label class="radio"><input type="radio" name="clases" [checked]="classMode() === 'manual'" (change)="classMode.set('manual')" /> Indicar</label>
+        </div>
+        @if (classMode() === 'manual') {
+          <app-number-field inputId="clases" label="Cantidad de clases (k)" [(value)]="classCount" [showErrors]="submitted()" />
+        }
+      </fieldset>
+
+      <label class="radio check">
+        <input type="checkbox" [checked]="byValue()" (change)="byValue.set($any($event.target).checked)" />
+        Tabla por valor (datos discretos)
+      </label>
+      @if (discreteHint()) {
+        <p class="help">Tus datos tienen pocos valores distintos: conviene activar «Tabla por valor».</p>
+      }
+
+      <div class="row">
+        <div class="field-block">
+          <label for="titulo-x">Nombre del eje x</label>
+          <input class="input" id="titulo-x" [value]="xTitle()" (input)="xTitle.set($any($event.target).value)" />
+        </div>
+        <app-decimals-select [(value)]="decimals" />
+      </div>
+    } @else {
+      <h2>Tus pares (x, y)</h2>
+      <app-data-input inputId="x-datos" label="Valores de x" placeholder="Ej.: 1, 2, 3, 4, 5" [(value)]="xText" [showErrors]="submitted()" />
+      <app-data-input inputId="y-datos" label="Valores de y" placeholder="Ej.: 2.1, 3.9, 6.2, 7.8, 10.1" [(value)]="yText" [showErrors]="submitted()" />
+      <label class="radio check">
+        <input type="checkbox" [checked]="showLine()" (change)="showLine.set($any($event.target).checked)" />
+        Mostrar la recta de regresión
+      </label>
+      <div class="row">
+        <div class="field-block">
+          <label for="eje-x">Nombre del eje x</label>
+          <input class="input" id="eje-x" [value]="xAxis()" (input)="xAxis.set($any($event.target).value)" />
+        </div>
+        <div class="field-block">
+          <label for="eje-y">Nombre del eje y</label>
+          <input class="input" id="eje-y" [value]="yAxis()" (input)="yAxis.set($any($event.target).value)" />
+        </div>
+      </div>
+    }
+
+    <div class="actions">
+      <button type="submit" class="btn-primary">Construir</button>
+      <button type="button" class="btn-secondary" (click)="loadExample()"><app-icon name="flask" [size]="18" /> Cargar ejemplo</button>
+      <button type="button" class="btn-secondary" (click)="clear()"><app-icon name="eraser" [size]="18" /> Limpiar</button>
+    </div>
+  </form>
+
+  <section class="result-panel" #resultPanel tabindex="-1" aria-label="Resultado" [id]="'panel-' + tab()" role="tabpanel" [attr.aria-labelledby]="'tab-' + tab()">
+    @if (tab() === 'datos') {
+      @if (table(); as t) {
+        @if (sturges(); as s) {
+          <section class="panel" aria-labelledby="h-sturges">
+            <h2 id="h-sturges">Cómo se obtuvieron las clases</h2>
+            <app-formula [tex]="'k=1+\\log_2 n'" [display]="true" />
+            <app-formula [tex]="'k=1+\\log_2 ' + s.n + '=' + exact(s.raw) + '\\ \\Rightarrow\\ k=' + s.k" [display]="true" />
+            <app-formula [tex]="'A=\\dfrac{x_{\\max}-x_{\\min}}{k}=\\dfrac{' + exact(s.max) + '-' + exact(s.min) + '}{' + s.k + '}=' + exact(s.width)" [display]="true" />
+            <p class="help">k se redondea hacia arriba (regla de Sturges); A es la amplitud de cada clase. Cada clase incluye su límite inferior y excluye el superior, salvo la última.</p>
+          </section>
+        }
+
+        <section class="panel" aria-labelledby="h-tabla">
+          <h2 id="h-tabla">Tabla de frecuencias</h2>
+          <div class="scroll-x">
+            <table class="data">
+              <caption class="sr-only">Tabla de frecuencias de {{ t.n }} datos</caption>
+              <thead>
+                <tr>
+                  <th scope="col">{{ t.kind === 'valores' ? 'Valor' : 'Clase' }}</th>
+                  @if (t.kind === 'intervalos') { <th scope="col">Marca</th> }
+                  <th scope="col">f</th>
+                  <th scope="col">fr</th>
+                  <th scope="col">%</th>
+                  <th scope="col">F</th>
+                  <th scope="col">Fr</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (c of t.classes; track $index) {
+                  <tr>
+                    <th scope="row" class="num">{{ t.kind === 'valores' ? f(c.lower) : f(c.lower) + ' – ' + f(c.upper) }}</th>
+                    @if (t.kind === 'intervalos') { <td class="num">{{ f(c.midpoint) }}</td> }
+                    <td class="num">{{ c.f }}</td>
+                    <td class="num">{{ f(c.fr, 4) }}</td>
+                    <td class="num">{{ f(c.pct, 1) }}</td>
+                    <td class="num">{{ c.F }}</td>
+                    <td class="num">{{ f(c.Fr, 4) }}</td>
+                  </tr>
+                }
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th scope="row">Total</th>
+                  @if (t.kind === 'intervalos') { <td></td> }
+                  <td class="num">{{ t.n }}</td>
+                  <td class="num">1.0000</td>
+                  <td class="num">100.0</td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+          <p class="help">f: frecuencia absoluta · fr: relativa · %: porcentaje · F: acumulada · Fr: relativa acumulada. Comprobación: Σf = {{ t.n }} = n.</p>
+        </section>
+
+        <app-histogram [table]="t" [xTitle]="xTitle()" [decimals]="decimals()" />
+      } @else {
+        <app-empty-state [message]="emptyMessage()" icon="chart">
+          <button type="button" class="btn-secondary" (click)="loadExample()">Cargar ejemplo</button>
+        </app-empty-state>
+      }
+    } @else {
+      @if (scatter(); as sc) {
+        @for (w of sc.warnings; track w.code) {
+          <app-alert-banner [level]="w.level" [message]="w.message" />
+        }
+        <app-scatter [x]="sc.x" [y]="sc.y" [line]="sc.line" [xTitle]="xAxis()" [yTitle]="yAxis()" [decimals]="decimals()" />
+      } @else {
+        <app-empty-state [message]="emptyMessage()" icon="chart">
+          <button type="button" class="btn-secondary" (click)="loadExample()">Cargar ejemplo</button>
+        </app-empty-state>
+      }
+    }
+  </section>
+</div>

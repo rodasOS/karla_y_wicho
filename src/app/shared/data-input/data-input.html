@@ -1,0 +1,38 @@
+<div class="field">
+  <label [attr.for]="inputId()">{{ label() }}</label>
+  <textarea
+    [id]="inputId()"
+    [rows]="rows()"
+    [value]="value()"
+    [placeholder]="placeholder()"
+    [attr.aria-describedby]="describedBy()"
+    [attr.aria-invalid]="visibleErrors().length ? 'true' : null"
+    (input)="onInput($event)"
+    (blur)="touched.set(true)"
+    spellcheck="false"
+    autocomplete="off"
+  ></textarea>
+  <p class="hint" [id]="inputId() + '-hint'">{{ hint() }}</p>
+
+  @if (parsed().tokens.length) {
+    <div [id]="inputId() + '-chips'" class="read">
+      <span class="read-title">Datos leídos ({{ parsed().tokens.length }}):</span>
+      <ul aria-label="Datos leídos">
+        @for (c of chips(); track c.index) {
+          <li class="chip" [class.bad]="c.value === null">{{ c.text }}</li>
+        }
+        @if (hidden() > 0) {
+          <li class="chip more">+{{ hidden() }} más</li>
+        }
+      </ul>
+    </div>
+  }
+
+  @if (visibleErrors().length) {
+    <div [id]="inputId() + '-error'" class="error" role="alert">
+      @for (e of visibleErrors(); track e.index) {
+        <p>{{ e.message }}</p>
+      }
+    </div>
+  }
+</div>

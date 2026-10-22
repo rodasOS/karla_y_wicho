@@ -1,0 +1,52 @@
+<figure class="chart">
+  <svg [attr.viewBox]="'0 0 ' + W + ' ' + H" role="img" aria-labelledby="sc-title sc-desc" preserveAspectRatio="xMidYMid meet">
+    <title id="sc-title">Diagrama de dispersión</title>
+    <desc id="sc-desc">{{ summary() }}</desc>
+    <defs>
+      <clipPath id="sc-clip"><rect [attr.x]="M.l" [attr.y]="M.t" [attr.width]="W - M.l - M.r" [attr.height]="H - M.t - M.b" /></clipPath>
+    </defs>
+
+    @for (t of geometry().yTicks; track t.y) {
+      <line class="grid" [attr.x1]="M.l" [attr.x2]="W - M.r" [attr.y1]="t.y" [attr.y2]="t.y" />
+      <text class="tick" [attr.x]="M.l - 10" [attr.y]="t.y + 7" text-anchor="end">{{ t.label }}</text>
+    }
+    @for (t of geometry().xTicks; track t.x) {
+      <line class="grid" [attr.x1]="t.x" [attr.x2]="t.x" [attr.y1]="M.t" [attr.y2]="geometry().baseline" />
+      <text class="tick" [attr.x]="t.x" [attr.y]="geometry().baseline + 28" text-anchor="middle">{{ t.label }}</text>
+    }
+    <line class="axis" [attr.x1]="M.l" [attr.x2]="W - M.r" [attr.y1]="geometry().baseline" [attr.y2]="geometry().baseline" />
+    <line class="axis" [attr.x1]="M.l" [attr.x2]="M.l" [attr.y1]="M.t" [attr.y2]="geometry().baseline" />
+
+    @if (geometry().fit; as ft) {
+      <line class="fit" clip-path="url(#sc-clip)" [attr.x1]="ft.x1" [attr.y1]="ft.y1" [attr.x2]="ft.x2" [attr.y2]="ft.y2" />
+    }
+    @for (p of geometry().points; track $index) {
+      <circle class="dot" [attr.cx]="p.cx" [attr.cy]="p.cy" r="7" />
+    }
+
+    <text class="title" [attr.x]="(M.l + W - M.r) / 2" [attr.y]="H - 14" text-anchor="middle">{{ xTitle() }}</text>
+    <text class="title" [attr.transform]="'translate(20 ' + (M.t + (H - M.b - M.t) / 2) + ') rotate(-90)'" text-anchor="middle">{{ yTitle() }}</text>
+  </svg>
+  <figcaption>
+    {{ summary() }}
+    @if (line(); as ln) {
+      <span class="legend"><span class="swatch" aria-hidden="true"></span> Recta: ŷ = {{ f(ln.a) }} {{ ln.b < 0 ? '−' : '+' }} {{ f(ln.b < 0 ? -ln.b : ln.b) }}x</span>
+    }
+  </figcaption>
+  <details class="alt">
+    <summary>Ver los datos del gráfico (tabla)</summary>
+    <div class="scroll-x">
+      <table class="data">
+        <caption class="sr-only">Pares de datos del diagrama de dispersión</caption>
+        <thead>
+          <tr><th scope="col">n.º</th><th scope="col">{{ xTitle() }}</th><th scope="col">{{ yTitle() }}</th></tr>
+        </thead>
+        <tbody>
+          @for (v of x(); track $index) {
+            <tr><th scope="row">{{ $index + 1 }}</th><td class="num">{{ v }}</td><td class="num">{{ y()[$index] }}</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </details>
+</figure>

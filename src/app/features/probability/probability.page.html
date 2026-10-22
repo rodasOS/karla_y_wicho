@@ -1,0 +1,117 @@
+<header class="page-head">
+  <h1>Probabilidad y distribución normal</h1>
+  <p class="lead">Resuelve probabilidades con la distribución normal (valores z y percentiles), eventos, probabilidad clásica y combinatoria.</p>
+</header>
+
+@if (entendido(); as e) {
+  <app-alert-banner level="info" [message]="e" />
+}
+@if (aviso(); as a) {
+  <app-alert-banner level="warning" [message]="a" />
+}
+
+<app-tabs [tabs]="tabs" label="Tipo de problema" [(active)]="tab" />
+
+<div class="module">
+  <form class="panel" (submit)="submit($event)" novalidate>
+    <app-error-summary [errors]="shownErrors()" />
+
+    @switch (tab()) {
+      @case ('normal') {
+        <h2>Distribución normal X ~ N(μ, σ²)</h2>
+        <div class="row">
+          <app-number-field inputId="mu" label="Media μ" [value]="muText()" (valueChange)="setMu($event)" [showErrors]="submitted()" />
+          <app-number-field inputId="sigma" label="Desviación σ" hint="Debe ser mayor que 0" [value]="sigmaText()" (valueChange)="setSigma($event)" [showErrors]="submitted()" />
+        </div>
+        <fieldset class="field-block">
+          <legend>¿Qué probabilidad buscas?</legend>
+          <div class="radio-group">
+            <label class="radio"><input type="radio" name="tipoN" [checked]="normalType() === 'menor'" (change)="normalType.set('menor')" /> P(X &lt; x)</label>
+            <label class="radio"><input type="radio" name="tipoN" [checked]="normalType() === 'mayor'" (change)="normalType.set('mayor')" /> P(X &gt; x)</label>
+            <label class="radio"><input type="radio" name="tipoN" [checked]="normalType() === 'entre'" (change)="normalType.set('entre')" /> P(a &lt; X &lt; b)</label>
+          </div>
+        </fieldset>
+        <div class="row">
+          <app-number-field inputId="a" [label]="normalType() === 'entre' ? 'Límite inferior a' : 'Valor x'" [(value)]="aText" [showErrors]="submitted()" />
+          @if (normalType() === 'entre') {
+            <app-number-field inputId="b" label="Límite superior b" [(value)]="bText" [showErrors]="submitted()" />
+          }
+        </div>
+      }
+      @case ('inverso') {
+        <h2>Percentil de la normal</h2>
+        <div class="row">
+          <app-number-field inputId="mu" label="Media μ" [value]="muText()" (valueChange)="setMu($event)" [showErrors]="submitted()" />
+          <app-number-field inputId="sigma" label="Desviación σ" hint="Debe ser mayor que 0" [value]="sigmaText()" (valueChange)="setSigma($event)" [showErrors]="submitted()" />
+        </div>
+        <app-number-field inputId="percentil" label="Percentil (0 a 100)" hint="Ej.: 95 para el percentil 95" [(value)]="percText" [showErrors]="submitted()" />
+      }
+      @case ('eventos') {
+        <h2>Probabilidad de eventos</h2>
+        <div class="field-block">
+          <label for="tipo-evento">Tipo de problema</label>
+          <select class="input" id="tipo-evento" (change)="eventKind.set($any($event.target).value)">
+            @for (k of eventKinds; track k.id) {
+              <option [value]="k.id" [selected]="k.id === eventKind()">{{ k.label }}</option>
+            }
+          </select>
+        </div>
+        <div class="row">
+          @for (f of eventFields(); track f.id) {
+            <app-number-field [inputId]="f.id" [label]="f.label" [hint]="f.hint ?? ''" [value]="f.sig()" (valueChange)="f.sig.set($event)" [showErrors]="submitted()" />
+          }
+        </div>
+      }
+      @case ('clasica') {
+        <h2>Probabilidad clásica y combinatoria</h2>
+        <div class="field-block">
+          <label for="tipo-clasica">Tipo de problema</label>
+          <select class="input" id="tipo-clasica" (change)="classicKind.set($any($event.target).value)">
+            @for (k of classicKinds; track k.id) {
+              <option [value]="k.id" [selected]="k.id === classicKind()">{{ k.label }}</option>
+            }
+          </select>
+        </div>
+        <div class="row">
+          @for (f of classicFields(); track f.id) {
+            <app-number-field [inputId]="f.id" [label]="f.label" hint="Entero mayor o igual que 0" [value]="f.sig()" (valueChange)="f.sig.set($event)" [showErrors]="submitted()" />
+          }
+        </div>
+      }
+    }
+
+    @if (tab() === 'normal' || tab() === 'inverso') {
+      <details class="stats-box">
+        <summary>Usar la media y s de una serie de datos</summary>
+        <div class="stack">
+          <app-data-input inputId="serie" label="Serie de datos" [(value)]="serieText" />
+          @if (seriesStats(); as s) {
+            <p class="help">x̄ = <span class="num">{{ s.mean }}</span> · s = <span class="num">{{ s.sd }}</span> (desviación muestral)</p>
+          }
+          <button type="button" class="btn-secondary" [disabled]="!seriesStats()" (click)="useSeries()">Usar x̄ como μ y s como σ</button>
+          @if (fromSample()) {
+            <p class="help">μ y σ se llenaron con los valores de tu serie: son estimaciones.</p>
+          }
+        </div>
+      </details>
+    }
+
+    <app-decimals-select [(value)]="decimals" />
+
+    <div class="actions">
+      <button type="submit" class="btn-primary">Calcular</button>
+      <button type="button" class="btn-secondary" (click)="loadExample()"><app-icon name="flask" [size]="18" /> Cargar ejemplo</button>
+      <button type="button" class="btn-secondary" (click)="clear()"><app-icon name="eraser" [size]="18" /> Limpiar</button>
+    </div>
+  </form>
+
+  <section class="result-panel" #resultPanel tabindex="-1" aria-label="Resultado" role="tabpanel" [id]="'panel-' + tab()" [attr.aria-labelledby]="'tab-' + tab()">
+    @if (outcome().solution; as s) {
+      <app-solution-view [solution]="s" [decimals]="decimals()" />
+    } @else {
+      <app-empty-state [message]="emptyMessage()" icon="dice">
+        <button type="button" class="btn-secondary" (click)="loadExample()">Cargar ejemplo</button>
+      </app-empty-state>
+    }
+  </section>
+</div>

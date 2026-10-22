@@ -1,0 +1,101 @@
+<a class="skip" href="#contenido" (click)="$event.preventDefault(); focusMain(main)">Saltar al contenido</a>
+
+<header class="topbar glass">
+  <a routerLink="/" class="brand">
+    <span class="logo" aria-hidden="true">Σ</span>
+    <span class="brand-text">
+      <strong>{{ appName }}</strong>
+      <small>{{ subtitle }}</small>
+    </span>
+  </a>
+
+  <form class="ask" role="search" (submit)="onQuestion($event)">
+    <label class="sr-only" for="ask-q">Escribe tu pregunta</label>
+    <app-icon name="search" [size]="18" />
+    <input id="ask-q" type="search" name="q" placeholder="Pregunta: media de 2.1, 2.3, 2.2, 2.4, 2.0…" autocomplete="off" [value]="question()" (input)="onQuestionInput($event)" />
+    <button type="submit" class="btn-primary btn-sm">Preguntar</button>
+  </form>
+</header>
+
+<div class="layout">
+  <nav class="side" aria-label="Principal">
+    <ul>
+      @for (n of mainNav.slice(0, 1); track n.path) {
+        <li>
+          <a [routerLink]="n.path" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"><app-icon [name]="n.icon" />{{ n.label }}</a>
+        </li>
+      }
+    </ul>
+    <p class="group">Calcular</p>
+    <ul>
+      @for (n of moduleNav; track n.path) {
+        <li>
+          <a [routerLink]="n.path" routerLinkActive="active"><app-icon [name]="n.icon" />{{ n.label }}</a>
+        </li>
+      }
+    </ul>
+    <p class="group">Aprender</p>
+    <ul>
+      @for (n of mainNav.slice(1); track n.path) {
+        <li>
+          <a [routerLink]="n.path" routerLinkActive="active"><app-icon [name]="n.icon" />{{ n.label }}</a>
+        </li>
+      }
+    </ul>
+  </nav>
+
+  <main id="contenido" #main tabindex="-1">
+    @if (fatal.failed()) {
+      <div class="fatal" role="alert">
+        <app-icon name="error" [size]="24" />
+        <div>
+          <p><strong>Algo salió mal.</strong> Ocurrió un problema inesperado, pero tus datos no se enviaron a ningún servidor.</p>
+          <button type="button" class="btn-primary" (click)="restart()">Reiniciar</button>
+        </div>
+      </div>
+    }
+    <router-outlet />
+  </main>
+</div>
+
+<footer class="footer">
+  <p class="course"><strong>{{ appName }}</strong> · {{ course }} · {{ section }}</p>
+  <ul class="authors" aria-label="Integrantes">
+    @for (a of authors; track a.carnet) {
+      <li>{{ a.name }} <span class="num">({{ a.carnet }})</span></li>
+    }
+  </ul>
+  <p class="uni">{{ university }} · {{ faculty }}</p>
+</footer>
+
+<nav class="bottom glass" aria-label="Navegación móvil">
+  <ul>
+    <li>
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeModules()"><app-icon name="home" />Inicio</a>
+    </li>
+    <li>
+      <button type="button" [attr.aria-expanded]="modulesOpen()" aria-controls="sheet-modulos" (click)="toggleModules()"><app-icon name="sigma" />Calcular</button>
+    </li>
+    <li>
+      <a routerLink="/ejemplos" routerLinkActive="active" (click)="closeModules()"><app-icon name="grid" />Ejemplos</a>
+    </li>
+    <li>
+      <a routerLink="/practicas" routerLinkActive="active" (click)="closeModules()"><app-icon name="target" />Prácticas</a>
+    </li>
+    <li>
+      <a routerLink="/pregunta" routerLinkActive="active" (click)="closeModules()"><app-icon name="search" />Pregunta</a>
+    </li>
+  </ul>
+</nav>
+
+@if (modulesOpen()) {
+  <div id="sheet-modulos" class="sheet glass" role="group" aria-label="Módulos de cálculo">
+    <ul>
+      @for (n of moduleNav; track n.path) {
+        <li>
+          <a [routerLink]="n.path" (click)="closeModules()"><app-icon [name]="n.icon" />{{ n.label }}</a>
+        </li>
+      }
+    </ul>
+  </div>
+}

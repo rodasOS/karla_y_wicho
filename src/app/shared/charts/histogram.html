@@ -1,0 +1,46 @@
+<figure class="chart">
+  <svg [attr.viewBox]="'0 0 ' + W + ' ' + H" role="img" aria-labelledby="hg-title hg-desc" preserveAspectRatio="xMidYMid meet">
+    <title id="hg-title">Histograma de frecuencias</title>
+    <desc id="hg-desc">{{ summary() }}</desc>
+    <defs>
+      <linearGradient id="bar-grad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#39ff14" stop-opacity="0.85" />
+        <stop offset="100%" stop-color="#39ff14" stop-opacity="0.12" />
+      </linearGradient>
+    </defs>
+
+    @for (t of geometry().yTicks; track t.y) {
+      <line class="grid" [attr.x1]="M.l" [attr.x2]="W - M.r" [attr.y1]="t.y" [attr.y2]="t.y" />
+      <text class="tick" [attr.x]="M.l - 10" [attr.y]="t.y + 7" text-anchor="end">{{ t.label }}</text>
+    }
+    @for (b of geometry().bars; track $index) {
+      <rect class="bar" [attr.x]="b.x" [attr.y]="b.y" [attr.width]="b.w" [attr.height]="b.h" />
+      <text class="val" [attr.x]="b.cx" [attr.y]="b.y - 8" text-anchor="middle">{{ b.f }}</text>
+    }
+    <line class="axis" [attr.x1]="M.l" [attr.x2]="W - M.r" [attr.y1]="geometry().baseline" [attr.y2]="geometry().baseline" />
+    <line class="axis" [attr.x1]="M.l" [attr.x2]="M.l" [attr.y1]="M.t" [attr.y2]="geometry().baseline" />
+    @for (t of geometry().xTicks; track $index) {
+      <line class="axis" [attr.x1]="t.x" [attr.x2]="t.x" [attr.y1]="geometry().baseline" [attr.y2]="geometry().baseline + 5" />
+      <text class="tick" [attr.x]="t.x" [attr.y]="geometry().baseline + 28" text-anchor="middle">{{ t.label }}</text>
+    }
+    <text class="title" [attr.x]="(M.l + W - M.r) / 2" [attr.y]="H - 14" text-anchor="middle">{{ xTitle() }}</text>
+    <text class="title" [attr.transform]="'translate(20 ' + (M.t + (H - M.b - M.t) / 2) + ') rotate(-90)'" text-anchor="middle">{{ yTitle() }}</text>
+  </svg>
+  <figcaption>{{ summary() }}</figcaption>
+  <details class="alt">
+    <summary>Ver los datos del gráfico (tabla)</summary>
+    <div class="scroll-x">
+      <table class="data">
+        <caption class="sr-only">Frecuencias del histograma</caption>
+        <thead>
+          <tr><th scope="col">{{ table().kind === 'valores' ? 'Valor' : 'Clase' }}</th><th scope="col">Frecuencia</th></tr>
+        </thead>
+        <tbody>
+          @for (c of table().classes; track $index) {
+            <tr><th scope="row">{{ range(c) }}</th><td class="num">{{ c.f }}</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </details>
+</figure>

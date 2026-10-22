@@ -1,0 +1,90 @@
+.chart {
+  margin: 0;
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  background: var(--glass-solid);
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+}
+svg {
+  width: 100%;
+  height: auto;
+  max-height: 420px;
+  font-family: var(--font-ui);
+}
+figcaption {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+.grid {
+  stroke: var(--color-border);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+}
+.axis {
+  stroke: var(--color-text-muted);
+  stroke-width: 2;
+}
+.tick {
+  fill: var(--color-text-muted);
+  font-size: 19px;
+  font-family: var(--font-ui);
+  font-variant-numeric: tabular-nums;
+}
+.val {
+  fill: var(--color-text);
+  font-size: 19px;
+  font-weight: 700;
+  font-family: var(--font-ui);
+  font-variant-numeric: tabular-nums;
+}
+.title {
+  fill: var(--color-text);
+  font-size: 21px;
+  font-weight: 600;
+}
+/* Barras con el degradado verde que se desvanece, como el área de la gráfica del demo */
+.bar {
+  fill: url(#bar-grad);
+  stroke: var(--color-cta);
+  stroke-width: 1.5;
+  stroke-opacity: 0.7;
+}
+/* Puntos verdes con halo; recta azul discontinua: se distinguen por forma y trazo, no solo por color */
+.dot {
+  fill: var(--color-cta);
+  stroke: var(--color-surface);
+  stroke-width: 2;
+  filter: drop-shadow(0 0 5px rgb(57 255 20 / 55%));
+}
+.fit {
+  stroke: var(--color-primary);
+  stroke-width: 3;
+  stroke-dasharray: 9 6;
+  stroke-linecap: round;
+}
+.alt summary {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  color: var(--color-primary-text);
+  font-weight: 600;
+}
+.alt {
+  border-top: 1px solid var(--color-border);
+}
+.legend {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-left: var(--space-3);
+  color: var(--color-text);
+  font-weight: 600;
+}
+.swatch {
+  width: 28px;
+  height: 0;
+  border-top: 3px dashed var(--color-primary);
+}

@@ -1,0 +1,73 @@
+<section class="sv" aria-label="Resultado" aria-live="polite">
+  @for (w of solution().warnings; track w.code + w.message) {
+    <app-alert-banner [level]="w.level" [message]="w.message" />
+  }
+
+  @if (primary().length) {
+    <div class="summary glass-card" aria-label="Resumen de la respuesta">
+      <div class="kpi-row">
+        @for (a of primary(); track a.label) {
+          <app-kpi [label]="a.label" [value]="kpiValue(a.value, a.text)" [unit]="a.text ? undefined : a.unit" [isText]="!!a.text" [primary]="true" [compact]="true" />
+        }
+      </div>
+      <a class="jump" href="#respuesta" (click)="$event.preventDefault(); respuesta.scrollIntoView({ behavior: 'smooth', block: 'start' })">Ver respuesta final</a>
+    </div>
+  }
+
+  <div class="head">
+    <h2>{{ solution().title }}: procedimiento</h2>
+    <button type="button" class="link" (click)="toggleAll()" [attr.aria-pressed]="expandAll()">
+      <app-icon name="chevron" [size]="16" />
+      {{ expandAll() ? 'Contraer todo' : 'Expandir todo' }}
+    </button>
+  </div>
+
+  <ol class="steps">
+    @for (step of solution().steps; track step.label; let i = $index) {
+      <li>
+        <details class="glass-card" [open]="i === 0 || expandAll()">
+          <summary>
+            <span class="idx">{{ i + 1 }}</span>
+            <span class="lbl">{{ step.label }}</span>
+            <span class="val num">{{ stepValue(step) }}</span>
+          </summary>
+          <div class="body">
+            <section class="blk formula">
+              <h3>1 · Fórmula</h3>
+              <app-formula [tex]="step.formulaTex" [display]="true" />
+            </section>
+            <section class="blk subst">
+              <h3>2 · Sustitución de valores</h3>
+              <app-formula [tex]="step.substitutionTex" [display]="true" />
+            </section>
+            <section class="blk proc">
+              <h3>3 · Procedimiento</h3>
+              <ol>
+                @for (p of step.procedure; track $index) {
+                  <li>{{ p }}</li>
+                }
+              </ol>
+            </section>
+            <section class="blk res">
+              <h3>4 · Resultado</h3>
+              <p class="num">{{ step.label }} = <strong>{{ stepValue(step) }}</strong></p>
+            </section>
+          </div>
+        </details>
+      </li>
+    }
+  </ol>
+
+  <section class="final" id="respuesta" #respuesta tabindex="-1" aria-labelledby="respuesta-titulo">
+    <h2 id="respuesta-titulo">Respuesta final</h2>
+    <app-result-card [items]="solution().answer" [decimals]="decimals()" />
+    @if (solution().interpretation.length) {
+      <h3>Interpretación</h3>
+      <ul class="interp">
+        @for (t of solution().interpretation; track $index) {
+          <li>{{ t }}</li>
+        }
+      </ul>
+    }
+  </section>
+</section>

@@ -1,0 +1,63 @@
+<header class="page-head">
+  <h1>Datos experimentales</h1>
+  <p class="lead">Procesa una serie de mediciones físicas con su unidad: media, desviación, error estándar y el resultado como x̄ ± s/√n.</p>
+</header>
+
+@if (entendido(); as e) {
+  <app-alert-banner level="info" [message]="e" />
+}
+@if (aviso(); as a) {
+  <app-alert-banner level="warning" [message]="a" />
+}
+
+<div class="module">
+  <form class="panel" (submit)="submit($event)" novalidate>
+    <h2>Tus mediciones</h2>
+    <app-error-summary [errors]="errorItems()" />
+
+    <app-data-input inputId="datos" label="Mediciones" placeholder="Ej.: 2.1, 2.3, 2.2, 2.4, 2.0" [(value)]="text" [showErrors]="submitted()" />
+
+    <div class="row">
+      <div class="field-block">
+        <label for="unidad">Unidad</label>
+        <input class="input" id="unidad" list="lista-unidades" autocomplete="off" placeholder="Ej.: A, V, m, s" [value]="unit()" (input)="unit.set($any($event.target).value)" [attr.aria-describedby]="unitNote() ? 'unidad-nota' : null" />
+        <datalist id="lista-unidades">
+          @for (u of units; track u) {
+            <option [value]="u"></option>
+          }
+        </datalist>
+        @if (unitNote()) {
+          <p class="help" id="unidad-nota">{{ unitNote() }}</p>
+        }
+      </div>
+      <app-decimals-select [(value)]="decimals" />
+    </div>
+
+    <div class="field-block">
+      <label for="convertir">Convertir a (opcional)</label>
+      <input class="input" id="convertir" list="lista-destinos" autocomplete="off" placeholder="Ej.: mA" [value]="convertTo()" (input)="convertTo.set($any($event.target).value)" />
+      <datalist id="lista-destinos">
+        @for (u of targets(); track u) {
+          <option [value]="u"></option>
+        }
+      </datalist>
+      <p class="help">Solo se puede convertir entre unidades de la misma magnitud (A ↔ mA, no A ↔ m).</p>
+    </div>
+
+    <div class="actions">
+      <button type="submit" class="btn-primary">Calcular</button>
+      <button type="button" class="btn-secondary" (click)="loadExample()"><app-icon name="flask" [size]="18" /> Cargar ejemplo</button>
+      <button type="button" class="btn-secondary" (click)="clear()"><app-icon name="eraser" [size]="18" /> Limpiar</button>
+    </div>
+  </form>
+
+  <section class="result-panel" #resultPanel tabindex="-1" aria-label="Resultado">
+    @if (solution(); as s) {
+      <app-solution-view [solution]="s" [decimals]="decimals()" />
+    } @else {
+      <app-empty-state [message]="emptyMessage()" icon="flask">
+        <button type="button" class="btn-secondary" (click)="loadExample()">Cargar ejemplo de corriente</button>
+      </app-empty-state>
+    }
+  </section>
+</div>

@@ -1,0 +1,59 @@
+<header class="page-head">
+  <h1>Interpretación: σ frente a s</h1>
+  <p class="lead">¿Poblacional o muestral? Entiende la diferencia y compárala con tus propios datos.</p>
+</header>
+
+@if (entendido(); as e) {
+  <app-alert-banner level="info" [message]="e" />
+}
+@if (aviso(); as a) {
+  <app-alert-banner level="warning" [message]="a" />
+}
+
+<section class="panel formulas" aria-label="Fórmulas">
+  <div class="cols">
+    <div>
+      <h2>Poblacional</h2>
+      <app-formula [tex]="'\\sigma=\\sqrt{\\dfrac{\\sum (x_i-\\mu)^2}{N}}'" [display]="true" />
+    </div>
+    <div>
+      <h2>Muestral</h2>
+      <app-formula [tex]="'s=\\sqrt{\\dfrac{\\sum (x_i-\\bar{x})^2}{n-1}}'" [display]="true" />
+    </div>
+  </div>
+  <dl class="concepts">
+    @for (c of explanation; track c.title) {
+      <div>
+        <dt>{{ c.title }}</dt>
+        <dd>{{ c.text }}</dd>
+      </div>
+    }
+  </dl>
+</section>
+
+<div class="module compare">
+  <section class="panel">
+    <h2>Compáralas con tus datos</h2>
+    <app-data-input inputId="datos" label="Datos" [(value)]="text" />
+    <div class="row">
+      <div class="field-block">
+        <label for="unidad">Unidad (opcional)</label>
+        <input class="input" id="unidad" autocomplete="off" placeholder="Ej.: A" [value]="unit()" (input)="unit.set($any($event.target).value)" />
+      </div>
+      <app-decimals-select [(value)]="decimals" />
+    </div>
+    <div class="actions">
+      <button type="button" class="btn-secondary" (click)="loadExample()"><app-icon name="flask" [size]="18" /> Cargar ejemplo</button>
+    </div>
+  </section>
+
+  <section class="result-panel" aria-label="Resultado">
+    @if (solution(); as s) {
+      <app-solution-view [solution]="s" [decimals]="decimals()" />
+    } @else {
+      <app-empty-state [message]="emptyMessage()" icon="book">
+        <button type="button" class="btn-secondary" (click)="loadExample()">Cargar ejemplo de corriente</button>
+      </app-empty-state>
+    }
+  </section>
+</div>

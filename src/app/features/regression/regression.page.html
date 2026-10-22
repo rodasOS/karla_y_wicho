@@ -1,0 +1,59 @@
+<header class="page-head">
+  <h1>Correlación y regresión</h1>
+  <p class="lead">Calcula el coeficiente de correlación r, la recta de regresión lineal simple ŷ = a + bx y su R², con interpretación.</p>
+</header>
+
+@if (entendido(); as e) {
+  <app-alert-banner level="info" [message]="e" />
+}
+@if (aviso(); as a) {
+  <app-alert-banner level="warning" [message]="a" />
+}
+
+<div class="module">
+  <form class="panel" (submit)="submit($event)" novalidate>
+    <h2>Tus pares (x, y)</h2>
+    <app-error-summary [errors]="errorItems()" />
+
+    <app-data-input inputId="x-datos" label="Valores de x (variable independiente)" placeholder="Ej.: 1, 2, 3, 4, 5" [(value)]="xText" [showErrors]="submitted()" />
+    <app-data-input inputId="y-datos" label="Valores de y (variable dependiente)" placeholder="Ej.: 2.1, 3.9, 6.2, 7.8, 10.1" [(value)]="yText" [showErrors]="submitted()" />
+
+    <div class="row">
+      <div class="field-block">
+        <label for="unidad-x">Unidad de x (opcional)</label>
+        <input class="input" id="unidad-x" list="lista-unidades" autocomplete="off" [value]="unitX()" (input)="unitX.set($any($event.target).value)" />
+      </div>
+      <div class="field-block">
+        <label for="unidad-y">Unidad de y (opcional)</label>
+        <input class="input" id="unidad-y" list="lista-unidades" autocomplete="off" [value]="unitY()" (input)="unitY.set($any($event.target).value)" />
+      </div>
+      <datalist id="lista-unidades">
+        @for (u of units; track u) {
+          <option [value]="u"></option>
+        }
+      </datalist>
+    </div>
+
+    <div class="row">
+      <app-number-field inputId="prediccion" label="Predecir y para x = (opcional)" hint="Se avisa si x está fuera del rango observado" [(value)]="predText" [showErrors]="submitted()" />
+      <app-decimals-select [(value)]="decimals" />
+    </div>
+
+    <div class="actions">
+      <button type="submit" class="btn-primary">Calcular</button>
+      <button type="button" class="btn-secondary" (click)="loadExample()"><app-icon name="flask" [size]="18" /> Cargar ejemplo</button>
+      <button type="button" class="btn-secondary" (click)="clear()"><app-icon name="eraser" [size]="18" /> Limpiar</button>
+    </div>
+  </form>
+
+  <section class="result-panel" #resultPanel tabindex="-1" aria-label="Resultado">
+    @if (outcome().solution; as s) {
+      <app-solution-view [solution]="s" [decimals]="decimals()" />
+      <app-scatter [x]="pairs().x.values" [y]="pairs().y.values" [line]="line()" [xTitle]="unitX() ? 'x (' + unitX() + ')' : 'x'" [yTitle]="unitY() ? 'y (' + unitY() + ')' : 'y'" [decimals]="decimals()" />
+    } @else {
+      <app-empty-state [message]="emptyMessage()" icon="trend">
+        <button type="button" class="btn-secondary" (click)="loadExample()">Cargar ejemplo</button>
+      </app-empty-state>
+    }
+  </section>
+</div>
