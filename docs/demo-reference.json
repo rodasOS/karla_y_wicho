@@ -1,0 +1,75 @@
+{
+  "_fuente": "https://uupm.cc/demo/fintech-crypto — CSS de .fintech-crypto y estilos computados medidos en Chrome (1440 px)",
+  "variables": {
+    "primary": "#0080ff",
+    "secondary": "#39ff14",
+    "cta": "#39ff14",
+    "bg": "#0a0e27",
+    "bgCard": "#0f1635",
+    "bgCardHover": "#141b42",
+    "text": "#ffffff",
+    "textMuted": "#8b92b3",
+    "border": "#1e2650",
+    "red": "#fb2c36"
+  },
+  "fuentes": {
+    "titulos": "Space Grotesk",
+    "cuerpo": "DM Sans",
+    "h1": { "size": 60, "weight": 700, "lineHeight": 75 },
+    "h2": { "size": 36, "weight": 700 },
+    "h3": { "size": 18, "weight": 600 },
+    "lead": { "size": 18, "lineHeight": 28 },
+    "secundario": { "size": 14, "lineHeight": 20 },
+    "leyenda": { "size": 12, "lineHeight": 16 }
+  },
+  "btnPrimary": {
+    "background": "rgb(57, 255, 20)",
+    "color": "rgb(10, 14, 39)",
+    "borderRadiusPx": 12,
+    "paddingPx": "14px 32px",
+    "weight": 600,
+    "hoverTranslateYPx": -2,
+    "hoverShadow": "0 0 30px rgba(57, 255, 20, 0.4)"
+  },
+  "btnSecondary": {
+    "background": "rgba(0, 0, 0, 0)",
+    "color": "rgb(255, 255, 255)",
+    "border": "1px solid rgb(30, 38, 80)",
+    "borderRadiusPx": 12,
+    "paddingPx": "14px 32px",
+    "weight": 500,
+    "hoverBorder": "rgb(0, 128, 255)",
+    "hoverBackground": "rgba(0, 128, 255, 0.1)"
+  },
+  "glassCard": {
+    "background": "rgba(15, 22, 53, 0.8)",
+    "border": "1px solid rgba(30, 38, 80, 0.5)",
+    "borderRadiusPx": 16,
+    "paddingPx": 24,
+    "blurPx": 20,
+    "hoverBorder": "rgb(0, 128, 255)",
+    "hoverBackground": "rgba(20, 27, 66, 0.9)",
+    "hoverShadow": "0 0 30px rgba(0, 128, 255, 0.15)"
+  },
+  "brillos": {
+    "glowPrimary": "0 0 20px rgba(0, 128, 255, 0.3)",
+    "glowSecondary": "0 0 20px rgba(57, 255, 20, 0.3)",
+    "textGlow": "0 0 20px rgba(57, 255, 20, 0.5)"
+  },
+  "gradienteTexto": "linear-gradient(135deg, rgb(0, 128, 255), rgb(57, 255, 20))",
+  "gridBg": { "lineColor": "rgba(30, 38, 80, 0.3)", "sizePx": 50 },
+  "cabecera": { "heightPx": 65, "background": "rgb(10, 14, 39) al 80 %", "blurPx": 12, "borderBottom": "1px solid rgb(30, 38, 80)", "enlaceColor": "rgb(139, 146, 179)", "enlaceSizePx": 14 },
+  "logoTile": { "sizePx": 32, "borderRadiusPx": 8, "gradient": "135deg azul → verde" },
+  "pildoraVerde": { "color": "rgb(57, 255, 20)", "backgroundAlpha": 0.1, "borderAlpha": 0.2, "paddingPx": "6px 12px", "sizePx": 14, "weight": 500 },
+  "pildoraAzul": { "color": "rgb(0, 128, 255)", "backgroundAlpha": 0.1, "borderAlpha": 0.2, "paddingPx": "6px 12px", "sizePx": 14, "weight": 500 },
+  "iconTile": { "sizePx": 48, "borderRadiusPx": 12, "gradientAlpha": 0.2, "iconColor": "rgb(0, 128, 255)" },
+  "stat": { "sizePx": 36, "weight": 700, "labelSizePx": 14, "labelWeight": 500, "subSizePx": 12 },
+  "tab": { "paddingPx": "4px 12px", "sizePx": 12, "borderRadiusPx": 8, "inactiveColor": "rgb(139, 146, 179)", "activeBackground": "rgb(0, 128, 255)" },
+  "_desviacionesPorAccesibilidad": {
+    "tabActivaTexto": "el demo usa blanco (3.8:1); la app usa azul marino (5.0:1)",
+    "textoAzul": "el azul como texto usa #4da3ff (6.7:1)",
+    "textoRojo": "el rojo como texto usa #ff6568 (6.2:1)",
+    "bordeControl": "los controles usan #6b76a5 (4.0:1) en vez de #1e2650 (1.2:1)",
+    "alturaMinima": "botones y pestañas miden al menos 44 px (el demo usa 24 px en las pestañas)"
+  }
+}
