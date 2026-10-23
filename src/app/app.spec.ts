@@ -5,7 +5,7 @@ import { App } from './app';
 import { routes } from './app.routes';
 
 const RUTAS: [string, string][] = [
-  ['/', 'Sigma Lab'],
+  ['/', 'Proteus'],
   ['/descriptiva', 'Estadística descriptiva'],
   ['/experimentales', 'Datos experimentales'],
   ['/tablas-graficas', 'Tablas y gráficas'],

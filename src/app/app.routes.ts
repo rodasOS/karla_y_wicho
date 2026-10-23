@@ -1,9 +1,9 @@
 import { Routes } from '@angular/router';
 
-const T = (t: string) => `${t} · Sigma Lab`;
+const T = (t: string) => `${t} · Proteus`;
 
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', title: 'Sigma Lab · Asistente de Estadística Aplicada', loadComponent: () => import('./features/home/home.page').then((m) => m.HomePage) },
+  { path: '', pathMatch: 'full', title: 'Proteus · Asistente de Estadística Aplicada', loadComponent: () => import('./features/home/home.page').then((m) => m.HomePage) },
   { path: 'descriptiva', title: T('Estadística descriptiva'), loadComponent: () => import('./features/descriptive/descriptive.page').then((m) => m.DescriptivePage) },
   { path: 'experimentales', title: T('Datos experimentales'), loadComponent: () => import('./features/experimental/experimental.page').then((m) => m.ExperimentalPage) },
   { path: 'tablas-graficas', title: T('Tablas y gráficas'), loadComponent: () => import('./features/tables-charts/tables-charts.page').then((m) => m.TablesChartsPage) },

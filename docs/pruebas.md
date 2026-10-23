@@ -1,4 +1,4 @@
-# Pruebas de exactitud — Sigma Lab
+# Pruebas de exactitud — Proteus
 
 ## 1. Verificación automática contra SciPy/NumPy (hecha)
 
