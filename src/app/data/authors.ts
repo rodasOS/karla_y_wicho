@@ -4,7 +4,7 @@ export interface Author {
   carnet: string;
 }
 
-export const APP_NAME = 'Sigma Lab';
+export const APP_NAME = 'Proteus';
 export const APP_SUBTITLE = 'Asistente Virtual de Estadística Aplicada';
 export const COURSE = 'Estadística Aplicada';
 export const SECTION = 'Sección Única';

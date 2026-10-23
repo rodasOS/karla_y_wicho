@@ -19,7 +19,7 @@ export class AppErrorHandler implements ErrorHandler {
   constructor(private readonly state: FatalErrorState) {}
 
   handleError(error: unknown): void {
-    console.error('[Sigma Lab]', error);
+    console.error('[Proteus]', error);
     this.state.report();
   }
 }

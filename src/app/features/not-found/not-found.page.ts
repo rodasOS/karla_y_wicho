@@ -7,7 +7,7 @@ import { RouterLink } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <h1>No encontramos esa página</h1>
-    <p>La dirección no corresponde a ningún módulo de Sigma Lab.</p>
+    <p>La dirección no corresponde a ningún módulo de Proteus.</p>
     <p><a routerLink="/">Volver al inicio</a></p>
   `,
 })

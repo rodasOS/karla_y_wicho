@@ -1,4 +1,4 @@
-# Sigma Lab — Asistente Virtual de Estadística Aplicada
+# Proteus — Asistente Virtual de Estadística Aplicada
 
 Proyecto académico · Universidad Mariano Gálvez de Guatemala · Facultad de Ingeniería · Estadística Aplicada · Sección Única
 

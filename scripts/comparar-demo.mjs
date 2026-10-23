@@ -46,7 +46,7 @@ for (const n of pairs) {
   const a = readFileSync(`${out}/_a-${n}.png`).toString('base64');
   await page.setContent(`<body style="margin:0;background:#050818;color:#8b92b3;font:14px sans-serif;display:flex;gap:32px;padding:24px;align-items:flex-start">
     <figure style="margin:0"><figcaption style="margin-bottom:8px">Demo (uupm.cc/demo/fintech-crypto)</figcaption><img src="data:image/png;base64,${d}"></figure>
-    <figure style="margin:0"><figcaption style="margin-bottom:8px">Sigma Lab</figcaption><img src="data:image/png;base64,${a}"></figure></body>`);
+    <figure style="margin:0"><figcaption style="margin-bottom:8px">Proteus</figcaption><img src="data:image/png;base64,${a}"></figure></body>`);
   await page.screenshot({ path: `${out}/${n}.png`, fullPage: true });
   console.log('comparación', n);
 }
